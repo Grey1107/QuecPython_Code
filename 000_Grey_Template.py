@@ -15,7 +15,7 @@ if True:  # 方便代码折叠, 可不要.
     checknet = checkNet.CheckNetwork(PROJECT_NAME, PROJECT_VERSION)
 
     # | 参数      | 参数类型 | 说明                | 类型      |
-    # | -------- | -------- | ------------------- | -------- |
+    # | -------- | ------- | ------------------ | -------- |
     # | CRITICAL | 常量     | 日志记录级别的数值 50 | critical |
     # | ERROR    | 常量     | 日志记录级别的数值 40 | error    |
     # | WARNING  | 常量     | 日志记录级别的数值 30 | warning  |
@@ -46,15 +46,14 @@ def thread(func):
         try:
             func()
         except Exception as e:
-            Grey_log.error("{}Because of the[{}] caught exception,restart now!!!!".format(func, e))
+            Grey_log.error(
+                "{}Because of the[{}] caught exception,restart now!!!!".format(func, e))
         finally:
             Grey_log.critical('End of the thread\r\n\r\n')
             pass  # 客户自己实现. 
 
 
 if __name__ == "__main__":
-    Grey_log.info('------------------------运行时间统计开始------------------------')
-    tm = utime.ticks_ms()  # 返回不断递增的毫秒计数器, 在某些值后会重新计数(未指定). 计数值本身无特定意义, 只适合用在ticks_diff()函数中. 
     if DebugFlag == False:
         utime.sleep(5)  # 手动运行本例程时, 可以去掉该延时, 如果将例程文件名改为main.py, 希望开机自动运行时, 需要加上该延时. 
     checknet.poweron_print_once()  # CDC口打印poweron_print_once()信息, 注释则无法从CDC口看到下面的poweron_print_once()中打印的信息. 
@@ -62,9 +61,9 @@ if __name__ == "__main__":
     # 如果用户程序包含网络相关代码必须执行wait_network_connected()等待网络就绪(拨号成功). 
     # 如果是网络无关代码, 可以屏蔽 wait_network_connected(). 
     if DebugFlag == False:
-        stagecode, subcode = checknet.wait_network_connected(120)
+        stagecode, subcode = checknet.wait_network_connected(60)
     elif DebugFlag == True:
-        stagecode, subcode = checknet.wait_network_connected(1)
+        stagecode, subcode = checknet.wait_network_connected(3)
     else:
         pass
     Grey_log.debug('stagecode: {}   subcode: {}'.format(stagecode, subcode))
@@ -76,9 +75,6 @@ if __name__ == "__main__":
         Grey_log.warning('【Look Out】 Network Not Available\r\n')
     else:
         Grey_log.error('【Look Out】 Network Ready\r\n')
-    Grey_log.info('--------------------------------------------------------------')
-    Grey_log.info('最终耗时: {:.3f}s'.format(utime.ticks_diff(utime.ticks_ms(), tm)/1000))
-    Grey_log.info('------------------------运行时间统计结束------------------------')
     Grey_log.info('User Code Start\r\n\r\n')
 
     if DebugFlag == False:
